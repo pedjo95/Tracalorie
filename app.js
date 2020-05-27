@@ -28,6 +28,28 @@ const ItemCtrl = (function() {
       return data.items;
     },
 
+    addItem: function(name, calories) {
+      let ID;
+
+      // create Id
+      if(data.items.length > 0) {
+        ID = data.items[data.items.length - 1].id + 1;
+      } else {
+        ID = 0;
+      }
+
+      // Calories to number
+      calories = parseInt(calories);
+
+      // create a new item
+      newItem = new Item(ID, name, calories);
+
+      // add to items array
+      data.items.push(newItem);
+
+      return newItem;
+    },
+
     logData: function() {
       return data;
     }
@@ -40,6 +62,9 @@ const ItemCtrl = (function() {
 const UICtrl = (function() {
   const UiSelectors = {
     itemList: '#item-list',
+    addBtn: '.add-btn',
+    itemNameInput: '#item-name',
+    itemCaloriesInput: '#item-calories'
   }
   
   // Public Methods
@@ -60,6 +85,16 @@ const UICtrl = (function() {
 
       // Insert into the UI
       document.querySelector(UiSelectors.itemList).innerHTML = html;
+    },
+    getItemInput: function() {
+      return {
+        name: document.querySelector(UiSelectors.itemNameInput).value,
+        calories: document.querySelector(UiSelectors.itemCaloriesInput).value,
+      }
+    },
+
+    getSelectors: function() {
+      return UiSelectors;
     }
   }
 })();
@@ -68,7 +103,27 @@ const UICtrl = (function() {
 
 //APP Controller 
 const App = (function(ItemCtrl, UICtrl) {
-  
+  // Load event listeners
+  const loadEventListeners = function() {
+    const UiSelectors = UICtrl.getSelectors();
+
+    // Add item event
+    document.querySelector(UiSelectors.addBtn).addEventListener('click', itemAddSubmit);
+  }
+
+  // Add item func
+  const itemAddSubmit = function(e) {
+
+    // Get input from the UI
+    const input = UICtrl.getItemInput();
+    
+    if(input.name !== '' && input.calories !== '') {
+      // add Item 
+      const newItem = ItemCtrl.addItem(input.name, input.calories);
+    }
+
+    e.preventDefault();
+  }
 
   // Public Methods
   return {
@@ -78,6 +133,9 @@ const App = (function(ItemCtrl, UICtrl) {
       
       // populate list with items
       UICtrl.populateItemList(items);
+
+      // load event listener
+      loadEventListeners();
     }
   }
 })(ItemCtrl, UICtrl);
