@@ -14,9 +14,9 @@ const ItemCtrl = (function() {
   // Data structure/ state
   const data = {
     items: [
-      { id: 0, name: 'Steak Dinner', calories: 1200 },
-      { id: 1, name: 'Cookie', calories: 400 },
-      { id: 2, name: 'Eggs', calories: 300 }
+      // { id: 0, name: 'Steak Dinner', calories: 1200 },
+      // { id: 1, name: 'Cookie', calories: 400 },
+      // { id: 2, name: 'Eggs', calories: 300 }
     ],
     currentItem: null,
     totalCalories: 0
@@ -93,6 +93,37 @@ const UICtrl = (function() {
       }
     },
 
+    addListItem: function(item) {
+      // Show the ul
+      document.querySelector(UiSelectors.itemList).style.display = 'block';
+      // Create li element
+      const li = document.createElement('li');
+      // add class
+      li.className = 'collection-item'
+      // add id
+      li.id = `item-${item.id}`;
+
+      // add HYML
+      li.innerHTML = `
+        <strong>${item.name}: </strong> <em>${item.calories} Calories</em>
+        <a href="#" class="secondary-content">
+        <i class="edit-item fa fa-pencil"></i>
+        </a>
+      `;
+
+      // Insert item
+      document.querySelector(UiSelectors.itemList).insertAdjacentElement('beforeend', li);
+    },
+
+    clearInput: function() {
+      document.querySelector(UiSelectors.itemNameInput).value = '';
+      document.querySelector(UiSelectors.itemCaloriesInput).value = '';
+    },
+
+    hideList: function() {
+      document.querySelector(UiSelectors.itemList).style.display = 'none';
+    },
+
     getSelectors: function() {
       return UiSelectors;
     }
@@ -120,6 +151,12 @@ const App = (function(ItemCtrl, UICtrl) {
     if(input.name !== '' && input.calories !== '') {
       // add Item 
       const newItem = ItemCtrl.addItem(input.name, input.calories);
+
+      // add Item to the Ui
+      UICtrl.addListItem(newItem);
+
+      // clear input
+      UICtrl.clearInput();
     }
 
     e.preventDefault();
@@ -130,9 +167,16 @@ const App = (function(ItemCtrl, UICtrl) {
     init: function() {
       // fetch items from data structure
       const items = ItemCtrl.getItems();
-      
-      // populate list with items
-      UICtrl.populateItemList(items);
+
+      // Check if any items 
+      if(items.length === 0) {
+        UICtrl.hideList();
+
+      } else {
+        // populate list with items
+        UICtrl.populateItemList(items);
+
+      }
 
       // load event listener
       loadEventListeners();
