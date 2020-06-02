@@ -217,6 +217,15 @@ const UICtrl = (function() {
       item.remove();
     },
 
+    removeAllItems: function() {
+      let listItems = document.querySelectorAll(UiSelectors.listItems);
+
+      // node list into an array
+      listItems = Array.from(listItems);
+
+      listItems.forEach(item => item.remove());
+    },
+
     clearInput: function() {
       document.querySelector(UiSelectors.itemNameInput).value = '';
       document.querySelector(UiSelectors.itemCaloriesInput).value = '';
@@ -396,7 +405,17 @@ const App = (function(ItemCtrl, UICtrl) {
     // Delete all items from data 
     ItemCtrl.clearAllItems();
 
-    // remove from the 
+    // Get total calories
+    const totalCalories = ItemCtrl.getTotalCalories();
+    // add total calories to the UI
+    UICtrl.showTotalCalories(totalCalories);
+
+    // remove from the UI
+    UICtrl.removeAllItems();
+
+    // Hide the ul
+    UICtrl.hideList();
+
   }
 
   // Public Methods
