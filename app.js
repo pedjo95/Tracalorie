@@ -1,4 +1,46 @@
 // Storage Controller
+const StorageCtrl = (function() {
+
+  // Public Methods
+  return {
+    storeItem: function(item) {
+      let items;
+
+      // Check items in localStorage
+      if(localStorage.getItem('items') === null) {
+        items = [];
+
+        items.push(item);
+
+        localStorage.setItem('items', JSON.stringify(items));
+
+      } else {
+        // get storage items
+        items = JSON.parse(localStorage.getItem('items'));
+
+        items.push(item);
+
+        localStorage.setItem('items', JSON.stringify(items));
+
+      }
+    },
+
+    getItemsFromStorage: function() {
+      let items;
+
+      if(localStorage.getItem('items') === null) {
+        items = [];
+
+      } else {
+        items = JSON.parse(localStorage.getItem('items'));
+      
+      }
+
+      return items;
+    }
+
+  }
+})();
 
 
 
@@ -13,11 +55,12 @@ const ItemCtrl = (function() {
 
   // Data structure/ state
   const data = {
-    items: [
-      // { id: 0, name: 'Steak Dinner', calories: 1200 },
-      // { id: 1, name: 'Cookie', calories: 400 },
-      // { id: 2, name: 'Eggs', calories: 300 }
-    ],
+    // items: [
+    //   // { id: 0, name: 'Steak Dinner', calories: 1200 },
+    //   // { id: 1, name: 'Cookie', calories: 400 },
+    //   // { id: 2, name: 'Eggs', calories: 300 }
+    // ],
+    items: StorageCtrl.getItemsFromStorage(),
     currentItem: null,
     totalCalories: 0
   }
@@ -272,7 +315,7 @@ const UICtrl = (function() {
 
 
 //APP Controller 
-const App = (function(ItemCtrl, UICtrl) {
+const App = (function(ItemCtrl, StorageCtrl, UICtrl) {
   // Load event listeners
   const loadEventListeners = function() {
     const UiSelectors = UICtrl.getSelectors();
@@ -322,6 +365,9 @@ const App = (function(ItemCtrl, UICtrl) {
       const totalCalories = ItemCtrl.getTotalCalories();
       // add total calories to the UI
       UICtrl.showTotalCalories(totalCalories);
+
+      // Store in localStorage
+      StorageCtrl.storeItem(newItem);
 
       // clear input
       UICtrl.clearInput();
@@ -445,6 +491,6 @@ const App = (function(ItemCtrl, UICtrl) {
       loadEventListeners();
     }
   }
-})(ItemCtrl, UICtrl);
+})(ItemCtrl, StorageCtrl, UICtrl);
 
 App.init();
